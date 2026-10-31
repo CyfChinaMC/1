@@ -58,7 +58,7 @@
     .玩家信息 { display: flex; align-items: center; justify-content: space-between; width: 100%; }
     .玩家名 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 14px; color: #fff !important; padding-left: 10px; width: 200px; flex-shrink: 0; }
 
-    /* 高清 2D 像素渲染图 */
+    /* 高清 3D 立体渲染图 */
     .头像 { width: 46px; height: 46px; border-radius: 10px; background-color: #000; image-rendering: pixelated; object-fit: contain; }
 
     .数据区 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; flex: 1; margin-left: 20px; }
@@ -100,9 +100,9 @@
 <body>
 
 <script>
-    // 改回你本地的图片路径，彻底告别官方恶搞的新版史蒂夫
-    const STEVE_SKIN = "steve.png";
-    const ALEX_SKIN = "alex.png";
+    // 这里使用 visage 接口直接读取 LittleSkin 的皮肤纹理，渲染出老版经典史蒂夫和 Alex
+    const STEVE_SKIN = "https://visage.surgeplay.com/bust/128?skinUrl=https://littleskin.cn/textures/4710";
+    const ALEX_SKIN = "https://visage.surgeplay.com/bust/128?skinUrl=https://littleskin.cn/textures/220103";
 </script>
 
 <div class="主容器">
@@ -207,11 +207,11 @@
         </div>
         
         <!-- 第6名 -->
-        <div class="行 普通" onclick="弹窗('steve', 'deamy', 6, '剑刃舞者', ['LT3','无','无','无','无','LT5'])">
+        <div class="行 普通" onclick="弹窗('alex', 'deamy', 6, '剑刃舞者', ['LT3','无','无','无','无','LT5'])">
             <div class="名次">6.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <img class="头像" data-type="steve"> deamy
+                    <img class="头像" data-type="alex"> deamy
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT3</span></div>
