@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PVPTiers</title>
-    <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/bundles/skinview3d.bundle.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans SC', sans-serif !important; }
@@ -40,9 +39,16 @@
         .玩家信息 { display: flex; align-items: center; justify-content: space-between; width: 100%; pointer-events: none; }
         .玩家名 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 14px; color: #fff !important; padding-left: 10px; width: 200px; flex-shrink: 0; }
 
-        /* 3D 容器 */
-        .canvas-container { width: 46px; height: 46px; border-radius: 10px; background-color: #0a0a0a; overflow: hidden; display: flex; align-items: center; justify-content: center; pointer-events: none; flex-shrink: 0; }
-        .canvas-container canvas { width: 200% !important; height: 200% !important; transform: translateY(10%); pointer-events: none; }
+        /* 强制设死的高清头像框，完美容纳正方形头图 */
+        .avatar-box {
+            width: 46px; height: 46px; border-radius: 10px; background-color: #000; 
+            overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+        }
+        .avatar-img {
+            width: 100%; height: 100%; 
+            image-rendering: pixelated; /* 保持像素边缘清晰 */
+            object-fit: cover; /* 防止被拉伸变形 */
+        }
 
         .数据区 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; flex: 1; margin-left: 20px; pointer-events: none; }
         .数据块 { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; border-radius: 10px; background-color: rgba(0,0,0,0.3); width: 100%; }
@@ -55,8 +61,15 @@
         .弹窗 { width: 90%; max-width: 440px; background-color: #141414; border-radius: 24px; padding: 2.2rem; text-align: center; position: relative; transform: scale(0.85) translateY(20px); opacity: 0; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s; }
         .弹窗遮罩.active .弹窗 { transform: scale(1) translateY(0); opacity: 1; }
         .关闭 { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; background-color: #222; border: none; border-radius: 50%; color: #888; cursor: pointer; font-size: 1.1rem; }
-        .big-canvas { width: 100px; height: 100px; border-radius: 16px; background-color: #0a0a0a; margin: 0 auto 1.2rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .big-canvas canvas { width: 200% !important; height: 200% !important; transform: translateY(10%); }
+        
+        .big-avatar-box {
+            width: 100px; height: 100px; border-radius: 16px; background-color: #0a0a0a; 
+            margin: 0 auto 1.2rem; overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        .big-avatar-img {
+            width: 100%; height: 100%; image-rendering: pixelated; object-fit: cover;
+        }
+        
         .玩家详情名 { font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; }
         .徽章 { display: inline-block; background-color: #222; color: #fff; padding: 6px 16px; border-radius: 50px; font-size: 0.9rem; font-weight: 700; margin-bottom: 1.5rem; }
         .排名条 { display: flex; background-color: #0a0a0a; border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem; height: 60px; }
@@ -73,7 +86,7 @@
             .名次 { font-size: 1.8rem; padding-top: 4px; }
             .玩家信息 { flex-direction: column; align-items: flex-start; gap: 10px; }
             .玩家名 { width: auto; font-size: 1.1rem; gap: 10px; padding-left: 0; }
-            .canvas-container { width: 36px; height: 36px; }
+            .avatar-box { width: 36px; height: 36px; }
             .数据区 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-left: 0; width: 100%; }
             .数据块 .玩法名 { font-size: 0.7rem; }
             .数据块 .等级值 { font-size: 0.9rem; }
@@ -81,13 +94,6 @@
     </style>
 </head>
 <body>
-
-<script>
-    // 加了时间戳后缀，强制浏览器不去读旧缓存，每次都重新去拉取你的本地图片
-    const timestamp = new Date().getTime();
-    const STEVE_SKIN = "steve.png?v=" + timestamp; 
-    const ALEX_SKIN = "alex.png?v=" + timestamp;
-</script>
 
 <div class="主容器">
     <div class="顶部">
@@ -104,7 +110,7 @@
             <div class="名次">1.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="canvas-container" data-skin="steve"></div> CyfChinaMC
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="img-0"></div> CyfChinaMC
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">HT3</span></div>
@@ -122,7 +128,7 @@
             <div class="名次">2.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="canvas-container" data-skin="alex"></div> Css_ChinaMC_2026
+                    <div class="avatar-box"><img class="avatar-img" data-type="alex" id="img-1"></div> Css_ChinaMC_2026
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT5</span></div>
@@ -140,7 +146,7 @@
             <div class="名次">3.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="canvas-container" data-skin="steve"></div> ZY_Minecraft
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="img-2"></div> ZY_Minecraft
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT3</span></div>
@@ -158,7 +164,7 @@
             <div class="名次">4.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="canvas-container" data-skin="steve"></div> MagicMoyu
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="img-3"></div> MagicMoyu
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT5</span></div>
@@ -176,7 +182,7 @@
             <div class="名次">5.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="canvas-container" data-skin="steve"></div> draem
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="img-4"></div> draem
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">无</span></div>
@@ -194,7 +200,7 @@
             <div class="名次">6.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="canvas-container" data-skin="alex"></div> deamy
+                    <div class="avatar-box"><img class="avatar-img" data-type="alex" id="img-5"></div> deamy
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT3</span></div>
@@ -212,7 +218,7 @@
             <div class="名次">7.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="canvas-container" data-skin="steve"></div> GroxMC
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="img-6"></div> GroxMC
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT5</span></div>
@@ -229,9 +235,11 @@
 
 <!-- 弹窗 -->
 <div class="弹窗遮罩" id="遮罩" onclick="关闭弹窗(event)">
-    <div class="弹窗" id="弹窗内容">
+    <div class="弹窗">
         <button class="关闭" onclick="关闭弹窗()">✕</button>
-        <div class="big-canvas" id="弹窗3D容器"></div>
+        <div class="big-avatar-box">
+            <img src="" class="big-avatar-img" id="大图">
+        </div>
         <div class="玩家详情名" id="详情名">玩家</div>
         <div class="徽章" id="详情徽章">称号</div>
         <div class="排名条">
@@ -253,45 +261,45 @@
         { type: 'steve', name: 'GroxMC', rank: 7, title: '全能战神', data: ['LT5','LT5','LT5','LT5','LT5','LT5'] }
     ];
 
-    // 延迟加载 3D，防止阻塞点击
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            document.querySelectorAll('.canvas-container').forEach(container => {
-                try {
-                    let isAlex = container.dataset.skin === 'alex';
-                    let skinUrl = isAlex ? ALEX_SKIN : STEVE_SKIN;
-                    
-                    let viewer = new skinview3d.SkinViewer({
-                        width: 128,
-                        height: 128,
-                        skin: skinUrl,
-                        model: isAlex ? "alex" : "steve" 
-                    });
-                    
-                    viewer.camera.position.set(0, 24, 40); 
-                    viewer.camera.fov = 25; 
-                    viewer.camera.lookAt(0, 24, 0); 
-                    viewer.camera.updateProjectionMatrix(); 
+    // 存头像的 Base64 数据
+    let steveData = "";
+    let alexData = "";
 
-                    viewer.controls.enableZoom = false;
-                    viewer.controls.enableRotate = false;
-                    viewer.autoRotate = false; 
-                    
-                    if (isAlex) {
-                        viewer.playerObject.skin.updateSkinType("slim");
-                    } else {
-                        viewer.playerObject.skin.updateSkinType("classic");
-                    }
-        
-                    container.appendChild(viewer.canvas);
-                } catch (e) {
-                    console.log("3D加载失败", e);
-                }
-            });
-        }, 300);
+    // 纯手工切图函数（使用 Canvas 读取本地的 64x64 皮肤）
+    function cropHead(src, callback) {
+        let img = new Image();
+        img.onload = function() {
+            // 创建一个临时画布，裁切出 8x8 的头部（正脸在 8,8 坐标）
+            let canvas = document.createElement('canvas');
+            canvas.width = 8; canvas.height = 8;
+            let ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 8, 8, 8, 8, 0, 0, 8, 8);
+            
+            // 放大到 64x64，保持像素颗粒感
+            let finalCanvas = document.createElement('canvas');
+            finalCanvas.width = 64; finalCanvas.height = 64;
+            let fCtx = finalCanvas.getContext('2d');
+            fCtx.imageSmoothingEnabled = false; // 像素清晰
+            fCtx.drawImage(canvas, 0, 0, 8, 8, 0, 0, 64, 64);
+            
+            callback(finalCanvas.toDataURL());
+        };
+        // 加时间戳强制浏览器不去读缓存
+        img.src = src + "?v=" + new Date().getTime();
+    }
+
+    // 执行切图
+    cropHead("steve.png", function(data) {
+        steveData = data;
+        document.querySelectorAll('.avatar-img[data-type="steve"]').forEach(el => el.src = steveData);
     });
 
-    // 事件委托，绝对点击有效
+    cropHead("alex.png", function(data) {
+        alexData = data;
+        document.querySelectorAll('.avatar-img[data-type="alex"]').forEach(el => el.src = alexData);
+    });
+
+    // 点击事件 (事件委托，绝对不会失效)
     document.querySelector('.滚动区').addEventListener('click', function(e) {
         const row = e.target.closest('.行');
         if (!row) return;
@@ -310,34 +318,12 @@
         document.getElementById('详情排名').textContent = 排名 + '.';
         document.getElementById('详情积分').textContent = `(${1000 - 排名 * 50} 分)`;
         
-        const box = document.getElementById('弹窗3D容器');
-        box.innerHTML = '';
-        let isAlex = (类型 === 'alex');
-        let skinUrl = isAlex ? ALEX_SKIN : STEVE_SKIN;
-        
-        try {
-            let viewer = new skinview3d.SkinViewer({
-                width: 256,
-                height: 256,
-                skin: skinUrl,
-                model: isAlex ? "alex" : "steve"
-            });
-            
-            viewer.camera.position.set(0, 24, 40);
-            viewer.camera.fov = 25;
-            viewer.camera.lookAt(0, 24, 0);
-            viewer.camera.updateProjectionMatrix();
-            
-            if (isAlex) {
-                viewer.playerObject.skin.updateSkinType("slim");
-            } else {
-                viewer.playerObject.skin.updateSkinType("classic");
-            }
-            
-            viewer.controls.enableZoom = false;
-            box.appendChild(viewer.canvas);
-        } catch (e) {
-            console.log("弹窗3D加载失败", e);
+        const bigImg = document.getElementById('大图');
+        // 如果裁切数据还没加载完，就留空（黑底），绝对不用外部图片
+        if (类型 === 'alex') {
+            bigImg.src = alexData || "";
+        } else {
+            bigImg.src = steveData || "";
         }
         
         const names = ['剑斗', '水晶', 'UHC', '盾斧', '重锤', '药水'];
