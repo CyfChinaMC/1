@@ -41,6 +41,7 @@
         .玩家名 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 14px; color: #fff !important; padding-left: 10px; width: 200px; flex-shrink: 0; }
         .special-name { font-size: 0.9rem; line-height: 1.1; word-break: break-all; max-width: 120px; }
 
+        /* 3D 容器 */
         .canvas-container { width: 48px; height: 48px; border-radius: 10px; background-color: #0a0a0a; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
         .数据区 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; flex: 1; margin-left: 20px; }
@@ -48,6 +49,7 @@
         .数据块 .玩法名 { font-size: 0.75rem; color: #fff; opacity: 0.8; font-weight: 700; }
         .数据块 .等级值 { font-size: 1rem; font-weight: 800; }
 
+        /* 弹窗 */
         .弹窗遮罩 { position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 99; backdrop-filter: blur(4px); }
         .弹窗遮罩.active { opacity: 1; pointer-events: auto; }
         .弹窗 { width: 90%; max-width: 440px; background-color: #141414; border-radius: 24px; padding: 2.2rem; text-align: center; position: relative; transform: scale(0.85) translateY(20px); opacity: 0; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s; }
@@ -95,6 +97,7 @@
     </div>
 
     <div class="滚动区">
+        <!-- 第1名 -->
         <div class="行 第一名" onclick="弹窗('steve', 'CyfChinaMC', 1, '巅峰主宰', ['HT3','HT4','LT3','LT4','HT5','LT5'])">
             <div class="名次">1.</div>
             <div class="玩家信息">
@@ -112,6 +115,7 @@
             </div>
         </div>
         
+        <!-- 第2名 (长名字处理) -->
         <div class="行 第二名" onclick="弹窗('alex', 'Css_ChinaMC_2026', 2, '水晶幻影', ['LT5','LT4','无','HT4','LT5','LT5'])">
             <div class="名次">2.</div>
             <div class="玩家信息">
@@ -130,6 +134,7 @@
             </div>
         </div>
         
+        <!-- 第3名 -->
         <div class="行 第三名" onclick="弹窗('steve', 'ZY_Minecraft', 3, '战术先锋', ['LT3','无','LT4','LT3','无','LT5'])">
             <div class="名次">3.</div>
             <div class="玩家信息">
@@ -147,6 +152,7 @@
             </div>
         </div>
         
+        <!-- 第4名 -->
         <div class="行 普通" onclick="弹窗('steve', 'MagicMoyu', 4, '附魔学者', ['LT5','LT4','无','LT4','无','LT5'])">
             <div class="名次">4.</div>
             <div class="玩家信息">
@@ -164,6 +170,7 @@
             </div>
         </div>
         
+        <!-- 第5名 -->
         <div class="行 普通" onclick="弹窗('steve', 'draem', 5, '重锤铁卫', ['无','无','无','无','HT3','LT5'])">
             <div class="名次">5.</div>
             <div class="玩家信息">
@@ -181,6 +188,7 @@
             </div>
         </div>
         
+        <!-- 第6名 -->
         <div class="行 普通" onclick="弹窗('alex', 'deamy', 6, '剑刃舞者', ['LT3','无','无','无','无','LT5'])">
             <div class="名次">6.</div>
             <div class="玩家信息">
@@ -198,6 +206,7 @@
             </div>
         </div>
         
+        <!-- 第7名 -->
         <div class="行 普通" onclick="弹窗('steve', 'GroxMC', 7, '全能战神', ['LT5','LT5','LT5','LT5','LT5','LT5'])">
             <div class="名次">7.</div>
             <div class="玩家信息">
@@ -217,6 +226,7 @@
     </div>
 </div>
 
+<!-- 弹窗 -->
 <div class="弹窗遮罩" id="遮罩" onclick="关闭弹窗(event)">
     <div class="弹窗" id="弹窗内容">
         <button class="关闭" onclick="关闭弹窗()">✕</button>
@@ -233,7 +243,7 @@
 
 <script>
     function setupSkinViewer(viewer, isAlex) {
-        // 1. 相机绝对居中，稍带俯视感，锁定头部
+        // 相机绝对居中，稍微俯视，锁定头部
         viewer.camera.position.set(0, 26, 40); 
         viewer.camera.fov = 25; 
         viewer.camera.lookAt(0, 23, 0); 
@@ -243,15 +253,14 @@
         viewer.controls.enableRotate = false;
         viewer.autoRotate = false; 
 
-        // 2. 身体向右侧旋转，产生 mctiers 风格的立体侧身感
+        // 【mctiers 风格】身体微侧，头转正，眼睛死死盯着屏幕中央
         viewer.playerObject.rotation.y = 0.35; 
         
-        // 3. 头部反向旋转，强制眼睛对齐正中央
         if (viewer.playerObject.skin.head) {
             viewer.playerObject.skin.head.rotation.y = -0.35;
         }
         
-        // 4. 强制确保 Alex 是细手臂 (Slim) 模型，Steve 是宽手臂 (Classic) 模型
+        // 强制细手臂 / 宽手臂
         if (isAlex) {
             viewer.playerObject.skin.updateSkinType("slim");
         } else {
