@@ -39,15 +39,20 @@
         .玩家信息 { display: flex; align-items: center; justify-content: space-between; width: 100%; pointer-events: none; }
         .玩家名 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 14px; color: #fff !important; padding-left: 10px; width: 200px; flex-shrink: 0; }
 
-        /* 纯 CSS 切图，完美防御跨域 */
+        /* 
+           【高阶 CSS 切图法】 
+           直接切出头部和部分身体，比单纯切头更有半身像的感觉
+        */
         .avatar-box {
             width: 46px; height: 46px; border-radius: 10px; background-color: #0a0a0a; 
             overflow: hidden; flex-shrink: 0; position: relative;
         }
         .avatar-img {
             width: 800%; height: 800%; position: absolute;
-            image-rendering: pixelated; 
+            image-rendering: pixelated; /* 保持像素清晰 */
+            /* 切出头、脸、肩膀（向左偏移1格，向上偏移1格） */
             top: -100%; left: -100%; 
+            /* 如果你觉得肩膀漏得太少，可以把 left 改成 -110% 左右微调 */
         }
 
         .数据区 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; flex: 1; margin-left: 20px; pointer-events: none; }
@@ -110,7 +115,7 @@
             <div class="名次">1.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="avatar-0"></div> CyfChinaMC
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve"></div> CyfChinaMC
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">HT3</span></div>
@@ -127,7 +132,7 @@
             <div class="名次">2.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="avatar-box"><img class="avatar-img" data-type="alex" id="avatar-1"></div> Css_ChinaMC_2026
+                    <div class="avatar-box"><img class="avatar-img" data-type="alex"></div> Css_ChinaMC_2026
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT5</span></div>
@@ -144,7 +149,7 @@
             <div class="名次">3.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="avatar-2"></div> ZY_Minecraft
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve"></div> ZY_Minecraft
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT3</span></div>
@@ -161,7 +166,7 @@
             <div class="名次">4.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="avatar-3"></div> MagicMoyu
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve"></div> MagicMoyu
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT5</span></div>
@@ -178,7 +183,7 @@
             <div class="名次">5.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="avatar-4"></div> draem
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve"></div> draem
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">无</span></div>
@@ -195,7 +200,7 @@
             <div class="名次">6.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="avatar-box"><img class="avatar-img" data-type="alex" id="avatar-5"></div> deamy
+                    <div class="avatar-box"><img class="avatar-img" data-type="alex"></div> deamy
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT3</span></div>
@@ -212,7 +217,7 @@
             <div class="名次">7.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <div class="avatar-box"><img class="avatar-img" data-type="steve" id="avatar-6"></div> GroxMC
+                    <div class="avatar-box"><img class="avatar-img" data-type="steve"></div> GroxMC
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT5</span></div>
@@ -255,13 +260,13 @@
         { type: 'steve', name: 'GroxMC', rank: 7, title: '全能战神', data: ['LT5','LT5','LT5','LT5','LT5','LT5'] }
     ];
 
-    // 给页面所有头像赋值，强行读取本地图片并加上时间戳绕过缓存
+    // 加载头像
     document.querySelectorAll('.avatar-img').forEach(img => {
-        if (img.dataset.type === 'steve') img.src = "steve.png?v=" + new Date().getTime();
-        else img.src = "alex.png?v=" + new Date().getTime();
+        if (img.dataset.type === 'steve') img.src = "steve.png";
+        else img.src = "alex.png";
     });
 
-    // 点击事件委托
+    // 点击事件委托，保证绝对能点开
     document.querySelector('.滚动区').addEventListener('click', function(e) {
         const row = e.target.closest('.行');
         if (!row) return;
@@ -281,7 +286,7 @@
         document.getElementById('详情积分').textContent = `(${1000 - 排名 * 50} 分)`;
         
         const bigImg = document.getElementById('大图');
-        bigImg.src = (类型 === 'alex') ? "alex.png?v=" + new Date().getTime() : "steve.png?v=" + new Date().getTime();
+        bigImg.src = (类型 === 'alex') ? "alex.png" : "steve.png";
         
         const names = ['剑斗', '水晶', 'UHC', '盾斧', '重锤', '药水'];
         let html = '';
