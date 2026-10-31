@@ -260,18 +260,18 @@
                 model: isAlex ? "alex" : "steve" 
             });
             
-            // 调整镜头位置，制造半侧面的立体感
-            viewer.camera.position.set(15, 24, 40); 
-            viewer.camera.fov = 30; 
-            viewer.camera.lookAt(0, 22, 0); 
+            // 完美还原参考图的视角
+            viewer.camera.position.set(0, 26, 40); // 正前方，稍微抬高一点点
+            viewer.camera.fov = 30; // 拉近放大
+            viewer.camera.lookAt(0, 22, 0); // 视线锁定脖子和头部交界处
             viewer.camera.updateProjectionMatrix(); 
 
             viewer.controls.enableZoom = false;
             viewer.controls.enableRotate = false;
             viewer.autoRotate = false; 
             
-            // 让人物自身稍微转个角度（面向左侧），配合镜头形成立体感
-            viewer.playerObject.rotation.y = -0.3; 
+            // 让人物向左转大概 20 度
+            viewer.playerObject.rotation.y = -0.35; 
 
             container.appendChild(viewer.canvas);
         });
@@ -295,8 +295,8 @@
             model: isAlex ? "alex" : "steve"
         });
         
-        // 弹窗里同样使用带有偏角的镜头
-        viewer.camera.position.set(15, 24, 40);
+        // 弹窗里的视角，和列表完全一致
+        viewer.camera.position.set(0, 26, 40);
         viewer.camera.fov = 30;
         viewer.camera.lookAt(0, 22, 0);
         viewer.camera.updateProjectionMatrix();
@@ -305,8 +305,8 @@
         viewer.controls.enableRotate = false;
         viewer.autoRotate = false;
         
-        // 弹窗里的人物也微微侧身
-        viewer.playerObject.rotation.y = -0.3;
+        // 弹窗里的人物也向左转
+        viewer.playerObject.rotation.y = -0.35;
         
         box.appendChild(viewer.canvas);
         
