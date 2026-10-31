@@ -41,6 +41,9 @@
         
         .玩家名 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 14px; color: #fff !important; padding-left: 10px; width: 200px; flex-shrink: 0; }
 
+        /* 针对超长名字的特殊处理 */
+        .special-name { font-size: 0.9rem; line-height: 1.1; word-break: break-all; max-width: 120px; }
+
         /* 3D 容器 - 强制不许缩小 */
         .canvas-container { width: 46px; height: 46px; border-radius: 10px; background-color: #0a0a0a; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .canvas-container canvas { width: 100% !important; height: 100% !important; transform: translateY(5%); }
@@ -117,7 +120,7 @@
             </div>
         </div>
         
-        <!-- 第2名 (添加了 special-name 类处理长名字) -->
+        <!-- 第2名 (长名字处理) -->
         <div class="行 第二名" onclick="弹窗('alex', 'Css_ChinaMC_2026', 2, '水晶幻影', ['LT5','LT4','无','HT4','LT5','LT5'])">
             <div class="名次">2.</div>
             <div class="玩家信息">
@@ -257,7 +260,8 @@
                 model: isAlex ? "alex" : "steve" 
             });
             
-            viewer.camera.position.set(0, 25, 45); 
+            // 调整镜头位置，制造半侧面的立体感
+            viewer.camera.position.set(15, 24, 40); 
             viewer.camera.fov = 30; 
             viewer.camera.lookAt(0, 22, 0); 
             viewer.camera.updateProjectionMatrix(); 
@@ -265,6 +269,9 @@
             viewer.controls.enableZoom = false;
             viewer.controls.enableRotate = false;
             viewer.autoRotate = false; 
+            
+            // 让人物自身稍微转个角度（面向左侧），配合镜头形成立体感
+            viewer.playerObject.rotation.y = -0.3; 
 
             container.appendChild(viewer.canvas);
         });
@@ -288,7 +295,8 @@
             model: isAlex ? "alex" : "steve"
         });
         
-        viewer.camera.position.set(0, 25, 45);
+        // 弹窗里同样使用带有偏角的镜头
+        viewer.camera.position.set(15, 24, 40);
         viewer.camera.fov = 30;
         viewer.camera.lookAt(0, 22, 0);
         viewer.camera.updateProjectionMatrix();
@@ -296,6 +304,9 @@
         viewer.controls.enableZoom = false;
         viewer.controls.enableRotate = false;
         viewer.autoRotate = false;
+        
+        // 弹窗里的人物也微微侧身
+        viewer.playerObject.rotation.y = -0.3;
         
         box.appendChild(viewer.canvas);
         
