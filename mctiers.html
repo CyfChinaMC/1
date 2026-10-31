@@ -100,9 +100,10 @@
 <body>
 
 <script>
-    // 这里使用 visage 接口直接读取 LittleSkin 的皮肤纹理，渲染出老版经典史蒂夫和 Alex
-    const STEVE_SKIN = "https://visage.surgeplay.com/bust/128?skinUrl=https://littleskin.cn/textures/4710";
-    const ALEX_SKIN = "https://visage.surgeplay.com/bust/128?skinUrl=https://littleskin.cn/textures/220103";
+    // 使用 skinUrl 直接指定你要的皮肤纹理，彻底绕过 UUID 抽盲盒的猫耳问题！
+    // 这里用的是 LittleSkin 的官方默认经典史蒂夫和经典 Alex
+    const STEVE_SKIN = "https://visage.surgeplay.com/bust/128?skinUrl=https%3A%2F%2Flittleskin.cn%2Ftextures%2F4710";
+    const ALEX_SKIN = "https://visage.surgeplay.com/bust/128?skinUrl=https%3A%2F%2Flittleskin.cn%2Ftextures%2F220103";
 </script>
 
 <div class="主容器">
@@ -117,7 +118,7 @@
 
     <div class="滚动区">
         <!-- 第1名 -->
-        <div class="行 第一名" onclick="弹窗('steve', 'CyfChinaMC', 1, '巅峰主宰', ['HT3','HT4','LT3','LT4','HT5','LT5'])">
+        <div class="行 第一名" data-index="0">
             <div class="名次">1.</div>
             <div class="玩家信息">
                 <div class="玩家名">
@@ -135,7 +136,7 @@
         </div>
         
         <!-- 第2名 -->
-        <div class="行 第二名" onclick="弹窗('alex', 'Css_ChinaMC_2026', 2, '水晶幻影', ['LT5','LT4','无','HT4','LT5','LT5'])">
+        <div class="行 第二名" data-index="1">
             <div class="名次">2.</div>
             <div class="玩家信息">
                 <div class="玩家名">
@@ -153,7 +154,7 @@
         </div>
         
         <!-- 第3名 -->
-        <div class="行 第三名" onclick="弹窗('steve', 'ZY_Minecraft', 3, '战术先锋', ['LT3','无','LT4','LT3','无','LT5'])">
+        <div class="行 第三名" data-index="2">
             <div class="名次">3.</div>
             <div class="玩家信息">
                 <div class="玩家名">
@@ -171,7 +172,7 @@
         </div>
         
         <!-- 第4名 -->
-        <div class="行 普通" onclick="弹窗('steve', 'MagicMoyu', 4, '附魔学者', ['LT5','LT4','无','LT4','无','LT5'])">
+        <div class="行 普通" data-index="3">
             <div class="名次">4.</div>
             <div class="玩家信息">
                 <div class="玩家名">
@@ -189,7 +190,7 @@
         </div>
         
         <!-- 第5名 -->
-        <div class="行 普通" onclick="弹窗('steve', 'draem', 5, '重锤铁卫', ['无','无','无','无','HT3','LT5'])">
+        <div class="行 普通" data-index="4">
             <div class="名次">5.</div>
             <div class="玩家信息">
                 <div class="玩家名">
@@ -207,11 +208,11 @@
         </div>
         
         <!-- 第6名 -->
-        <div class="行 普通" onclick="弹窗('alex', 'deamy', 6, '剑刃舞者', ['LT3','无','无','无','无','LT5'])">
+        <div class="行 普通" data-index="5">
             <div class="名次">6.</div>
             <div class="玩家信息">
                 <div class="玩家名">
-                    <img class="头像" data-type="alex"> deamy
+                    <img class="头像" data-type="steve"> deamy
                 </div>
                 <div class="数据区">
                     <div class="数据块"><span class="玩法名">剑斗</span><span class="等级值">LT3</span></div>
@@ -225,7 +226,7 @@
         </div>
         
         <!-- 第7名 -->
-        <div class="行 普通" onclick="弹窗('steve', 'GroxMC', 7, '全能战神', ['LT5','LT5','LT5','LT5','LT5','LT5'])">
+        <div class="行 普通" data-index="6">
             <div class="名次">7.</div>
             <div class="玩家信息">
                 <div class="玩家名">
@@ -260,10 +261,32 @@
 </div>
 
 <script>
-    // 页面加载时赋予所有图片真实地址
+    // 防止图片加载失败影响点击事件
     document.querySelectorAll('.头像').forEach(img => {
+        img.onerror = function() { this.style.opacity = 0; }; // 加载失败直接隐藏
         if (img.dataset.type === 'steve') img.src = STEVE_SKIN;
         else img.src = ALEX_SKIN;
+    });
+
+    // 准备所有玩家数据
+    const players = [
+        { type: 'steve', name: 'CyfChinaMC', rank: 1, title: '巅峰主宰', data: ['HT3','HT4','LT3','LT4','HT5','LT5'] },
+        { type: 'alex', name: 'Css_ChinaMC_2026', rank: 2, title: '水晶幻影', data: ['LT5','LT4','无','HT4','LT5','LT5'] },
+        { type: 'steve', name: 'ZY_Minecraft', rank: 3, title: '战术先锋', data: ['LT3','无','LT4','LT3','无','LT5'] },
+        { type: 'steve', name: 'MagicMoyu', rank: 4, title: '附魔学者', data: ['LT5','LT4','无','LT4','无','LT5'] },
+        { type: 'steve', name: 'draem', rank: 5, title: '重锤铁卫', data: ['无','无','无','无','HT3','LT5'] },
+        { type: 'steve', name: 'deamy', rank: 6, title: '剑刃舞者', data: ['LT3','无','无','无','无','LT5'] },
+        { type: 'steve', name: 'GroxMC', rank: 7, title: '全能战神', data: ['LT5','LT5','LT5','LT5','LT5','LT5'] }
+    ];
+
+    // 统一绑定点击事件，彻底排除 HTML 内联事件被阻断的可能
+    document.querySelectorAll('.行').forEach((row) => {
+        row.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            const player = players[index];
+            if (!player) return;
+            弹窗(player.type, player.name, player.rank, player.title, player.data);
+        });
     });
 
     function 弹窗(类型, 真名, 排名, 称号, 数据) {
@@ -282,11 +305,12 @@
             html += `<div class="战绩项"><span>${names[i]}</span><span style="color:#ffffff">${val}</span></div>`;
         }
         document.getElementById('战绩网格').innerHTML = html;
+        
         document.getElementById('遮罩').classList.add('active');
     }
 
     function 关闭弹窗(e) {
-        if (!e || e.target.id === '遮罩') {
+        if (!e || e.target.id === '遮罩' || e.target.classList.contains('关闭')) {
             document.getElementById('遮罩').classList.remove('active');
         }
     }
